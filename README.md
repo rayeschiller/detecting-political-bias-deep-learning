@@ -2,7 +2,7 @@
 Detecting Political Bias in Speeches and News Articles in the US Using Deep Learning Methods 
 
 Notes on Convote scraped dataset:
-The test, development, and training sets were scraped from the Convote ```data_stage_three``` folder.
+The ```test_set```, ```development_set```, and ```training_set``` were scraped from the Convote ```data_stage_three``` folder.
 
 The data is stored in CSVs in the format ```text,party``` e.g. ```data,label```.
 
