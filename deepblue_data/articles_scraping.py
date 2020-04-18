@@ -5,7 +5,23 @@ from bs4 import BeautifulSoup
 HEADERS = {'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36"}
 
 PARSE_FUNCTIONS = {
-    'www.usatoday.com': lambda x: x.find_all('p', class_='gnt_ar_b_p')
+    'www.usatoday.com': lambda x: x.find_all('p', class_='gnt_ar_b_p'),
+    'latimesblogs.latimes.com': lambda x: x.find_all('p'),
+    'jp.wsj.com': lambda x: x.find_all('p'),
+    'india.blogs.nytimes.com': lambda x: x.find_all('p', class="story-body-text"),
+    'ph.news.yahoo.com': lambda x: x.find_all('p'),
+    'buzz.money.cnn.com': lambda x: x.find_all('p'),
+    'krugman.blogs.nytimes.com': lambda x: x.find_all('p', class="story-body-text"),
+    'www.nbcnews.com': lambda x: x.find_all('p'),
+    'www.foxnews.com': lambda x: x.find_all('p'),
+    'www.nytimes.com': lambda x: x.find_all ('p', class="css-exrw3m evys1bk0"),
+    'www.latimes.com': lambda x: x.find_all('p'),
+    'uk.news.yahoo.com': lambda x: x.find_all ('p', class="canvas-atom canvas-text Mb(1.0em) Mb(0)--sm Mt(0.8em)--sm"),
+    "takingnote.blogs.nytimes.com": lambda x: x.find_all ('p', class="story-body-text"),
+    'www.latimes.comthelead.blogs.cnn.com': lambda x: x.find_all('p'),
+    'ftw.usatoday.com': lambda x: x.find_all('p'),
+    'presspass.nbcnews.com': lambda x: x.find_all('p'),
+    'blogs.chicagotribune.com': lambda x: x.find_all('p'),    
 }
 
 DEFAULT_FUNC = lambda x: x.find_all('p')
