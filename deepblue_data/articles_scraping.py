@@ -1,4 +1,4 @@
-import csv, pdb
+import csv, pdb, json
 import requests
 from bs4 import BeautifulSoup
 
@@ -22,36 +22,53 @@ PARSE_FUNCTIONS = {
     'ftw.usatoday.com': lambda x: x.find_all('p'),
     'presspass.nbcnews.com': lambda x: x.find_all('p'),
     'blogs.chicagotribune.com': lambda x: x.find_all('p'),    
+    'us.cnn.com': lambda x: x.find_all('div', class_='zn-body__paragraph')
 }
 
 DEFAULT_FUNC = lambda x: x.find_all('p')
 
-def scraper():
+def read_from_tsv():
     with open('deepblue_data/deepblue_labels.tsv') as csv_file:
             filereader = csv.DictReader(csv_file, delimiter='\t')
-            count = 0
             for line in filereader:
+                yield line
 
-                link = line['url']
-                website = line['url'].split('/')[2]
+def scraper(read_func):
+    output = []
+    count = 1
 
+    with open('scraped_data_all.tsv', 'w') as csvfile:
+        fields = ['url', 'q3', 'perceived', 'primary.topic', 'secondary.topic',	'democrat.vote', 'republican.vote', 'content']
+        writer = csv.DictWriter(csvfile, fieldnames=fields, delimiter='\t')
+        writer.writeheader()
+
+        for row in read_func():
+            print("Getting link no: %d" % count)
+            link = row['url']
+            website = link.split('/')[2]
+
+            try:
+                content = requests.get(link, headers=HEADERS).content
+            except:
                 try:
-                    content = requests.get(link, headers=HEADERS).content
+                    content = requests.get(link).content
                 except:
                     print("Couldn't get article for %s" % link)
                     continue
 
-                soup = BeautifulSoup(content)
-                parse_func = PARSE_FUNCTIONS.get(website, DEFAULT_FUNC)
+            soup = BeautifulSoup(content)
+            parse_func = PARSE_FUNCTIONS.get(website, DEFAULT_FUNC)
 
-                paragraphs = [p.get_text() for p in parse_func(soup)]
+            paragraphs = [p.get_text() for p in parse_func(soup)]
 
-                print('\n'.join(paragraphs))
+            row.update({'content': '\n'.join(paragraphs)})
+            writer.writerow(row)
+            count += 1
 
-                # NOTE: This break statement is temporarily put here to avoid running
-                # this for thousands of articles. Modify as necessary.
+            # NOTE: This break statement is temporarily put here to avoid running
+            # this for thousands of articles. Modify as necessary.
+            if count > 5:
                 break
-
 
 def get_websites():
     websites = set() 
@@ -73,4 +90,4 @@ def get_websites():
 
 
 if __name__ == "__main__":
-    scraper()
+    scraper(read_from_tsv)
