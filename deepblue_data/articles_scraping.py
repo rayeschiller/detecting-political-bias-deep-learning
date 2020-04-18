@@ -6,23 +6,19 @@ HEADERS = {'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleW
 
 PARSE_FUNCTIONS = {
     'www.usatoday.com': lambda x: x.find_all('p', class_='gnt_ar_b_p'),
-    'latimesblogs.latimes.com': lambda x: x.find_all('p'),
-    'jp.wsj.com': lambda x: x.find_all('p'),
     'india.blogs.nytimes.com': lambda x: x.find_all('p', class="story-body-text"),
-    'ph.news.yahoo.com': lambda x: x.find_all('p'),
-    'buzz.money.cnn.com': lambda x: x.find_all('p'),
     'krugman.blogs.nytimes.com': lambda x: x.find_all('p', class="story-body-text"),
-    'www.nbcnews.com': lambda x: x.find_all('p'),
-    'www.foxnews.com': lambda x: x.find_all('p'),
     'www.nytimes.com': lambda x: x.find_all ('p', class="css-exrw3m evys1bk0"),
-    'www.latimes.com': lambda x: x.find_all('p'),
     'uk.news.yahoo.com': lambda x: x.find_all ('p', class="canvas-atom canvas-text Mb(1.0em) Mb(0)--sm Mt(0.8em)--sm"),
-    "takingnote.blogs.nytimes.com": lambda x: x.find_all ('p', class="story-body-text"),
-    'www.latimes.comthelead.blogs.cnn.com': lambda x: x.find_all('p'),
-    'ftw.usatoday.com': lambda x: x.find_all('p'),
-    'presspass.nbcnews.com': lambda x: x.find_all('p'),
-    'blogs.chicagotribune.com': lambda x: x.find_all('p'),    
-    'us.cnn.com': lambda x: x.find_all('div', class_='zn-body__paragraph')
+    'takingnote.blogs.nytimes.com': lambda x: x.find_all ('p', class="story-body-text"),
+    'us.cnn.com': lambda x: x.find_all('div', class_='zn-body__paragraph'),
+    'ca.news.yahoo.com': lambda x: x.find_all('p', class="canvas-atom canvas-text Mb(1.0em) Mb(0)--sm Mt(0.8em)--sm"),
+    'www.cnn.com': lambda x: x.find_all('div', class="zn-body__paragraph speakable"),
+    'apps.washingtonpost.com': lambda x: x.find_all('td')
+    'theater.nytimes.com': lambda x: x.find_all ('p', class="css-exrw3m evys1bk0"),
+    'fivethirtyeight.blogs.nytimes.com': lambda x: x.find_all('p', class="story-body-text"),
+    'edition.cnn.com': lambda x: x.find_all('p', class="zn-body__paragraph speakable"),
+    'opinionator.blogs.nytimes.com': lambda x: x.find_all('p', class="story-body-text")
 }
 
 DEFAULT_FUNC = lambda x: x.find_all('p')
