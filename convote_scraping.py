@@ -3,7 +3,6 @@ from os.path import isfile, join
 
 mypath = "../convote/data_stage_three"
 directories = [f for f in listdir(mypath)]
-print(len(directories))
 
 for dir in directories:
     files = [f for f in listdir(mypath +"/" + dir)]
