@@ -4,11 +4,12 @@ import itertools
 from scipy import misc
 from nltk.corpus import stopwords
 import torch
-from transformers import BertTokenizer
+from transformers import BertTokenizer, BertModel
 import json
 import sys
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
+bert_model = BertModel.from_pretrained('bert-base-uncased')
 #bert_model = torch.hub.load('huggingface/pytorch-transformers', 'model', 'bert-base-uncased')
 
 stop_words = set(stopwords.words('english'))
@@ -45,27 +46,48 @@ def clean(df):
 
     return df
 
-# tokenize the dataset. The json dump for this is ~500M so
-# we may want to consider a way to compute on the fly
+# tokenize the dataset. encode_plus pads the data to length 512 and adds a masking list
+# as well as an attention list, but it seems like those are actually only necesary for
+# using Bert as a model. We're just using it as a feature extractor, so we only need the
+# encodings.
 def bert_tokenize(speeches):
     dataset = []
     for i, speech in enumerate(speeches, 0):
         pp = []
         for sent in speech:
-            sent = tokenizer.encode_plus(
-                        xtrain[0][0],
+            """sent = tokenizer.encode_plus(
+                        sent,
                         add_special_tokens=True,
                         max_length=512, # Max length BERT can handle.
                         pad_to_max_length=True,
                         return_attention_mask=True
-                    )
+                    )"""
+            sent = tokenizer.encode(sent, add_special_tokens=True)
             pp.append(sent)
         dataset.append(pp)
     return dataset
 
-# examples
-'''readname, writename = sys.argv[1], sys.argv[2]
+# ---- Example of how to use the preprocessing code. -----
+readname = sys.argv[1]
+
+# Load the training data from csv
 xtrain, ytrain = load_csv(readname)
 
+# Reduce teh dataset by separating tokens, removing stopwords, and splitting
+# speeches into sentences.
 xtrain = clean(xtrain)
-token_set = bert_tokenize(xtrain)'''
+
+# Convert 2d array of tokens to a 2d array of bert encodings (which are vocab indexes)
+token_set = bert_tokenize(xtrain)
+
+'''print(len(token_set))'''
+
+# Get the first sentence in the first training example and convert it to a tensor
+test = torch.tensor(token_set[0][0]).unsqueeze(0)
+
+# The model needs to be in eval mode to avoid dropouts being added
+bert_model.eval()
+out, hidden = bert_model(test)
+# The final hidden state represents the entire sentence (could be interesting to use).
+# 'out' is the word-by-word matrix of feature vectors (sentence_len x 768)
+print(out.shape, hidden.shape)
